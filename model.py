@@ -42,15 +42,15 @@ class RNASSP(nn.Module):
         input: L*L*8
         output: L*3
         '''
-        seq = seq.permute(0, 3, 1, 2)  # 8*L*L
-        seq = self.conv1(seq) # 32*L*L
+        seq = seq.permute(0, 3, 1, 2)  # N*d*L*L
+        seq = self.conv1(seq) # N*4d*L*L
         for i in range(16):
             seq = self.resblock(seq)
             seq = self.act1(seq)
             seq = self.norm1(seq)
-        seq = seq.squeeze()
-        seq = seq.permute(1,2,0) # L*L*32
-        seq,(h0,c0) = self.biLSTM(seq) #L*L*6
+        seq_mean = torch.mean(seq,dim=3) # N*4d*L
+        seq_mean = seq_mean.permute(2,0,1) # L*N*32
+        seq_mean,(h0,c0) = self.biLSTM(seq_mean) #L*N*6
         # seq = torch.tensor(seq)
         # print(seq.shape)
         # seq = seq.permute(2,0,1) #6*L*L
@@ -59,8 +59,9 @@ class RNASSP(nn.Module):
         # seq = self.norm2(seq)
         # seq = seq.squeeze(0)
         # seq = seq.permute(1,2,0)
-        seq = self.fc(seq) #L*L*3
+        seq_mean = self.fc(seq_mean) #L*N*3
+        seq_mean = seq_mean.permute(1,0,2)
         seq = self.output(seq)
-        seq = torch.mean(seq,dim=0)
+        # seq = torch.mean(seq,dim=0)
         # seq = torch.mean(seq,dim=1)
         return seq

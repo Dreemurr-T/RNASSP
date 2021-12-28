@@ -9,10 +9,11 @@ from model import RNASSP
 import numpy as np
 import random
 
-data_set = data.RNADataset('5s_seq/', '5s_stru/')
+data_set = data.RNADataset('data_seq/', 'data_csv/')
 
+batch_size = 16
 train_dataset = DataLoader(
-    dataset=data_set, num_workers=1, batch_size=1, shuffle=True)
+    dataset=data_set, num_workers=1, batch_size=batch_size, shuffle=True)
 
 #固定随机种子
 np.random.seed(0)
@@ -44,7 +45,6 @@ def train(epoch):
             true_notation = Variable(true_notation)
             base_mat = base_matrix_concat(ori_seq)
             notation_produced = model(base_mat)
-            true_notation = true_notation.squeeze(0)
             loss = criterion1(notation_produced,true_notation)
             print(loss)
             loss.backward()
