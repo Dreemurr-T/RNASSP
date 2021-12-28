@@ -11,7 +11,10 @@ import random
 
 from torch.utils.tensorboard import SummaryWriter
 
-data_set = data.RNADataset('data_seq/', 'data_csv/')
+seq_path = 'data_seq/'
+struc_path = 'data_struc/'
+
+data_set = data.RNADataset('data_seq/', 'data_stru/')
 
 batch_size = 1
 train_dataset = DataLoader(
@@ -45,23 +48,40 @@ def train(epoch):
         struc_len = true_notation.shape[1]
         if seq_L == struc_len:
             ori_seq = Variable(ori_seq)
-            true_notation = Variable(true_notation)
+            # true_notation = Variable(true_notation)
             base_mat = base_matrix_concat(ori_seq)
             notation_produced = model(base_mat)
             loss = criterion1(notation_produced, true_notation)
+            acc = cal_acc(notation_produced, true_notation)
             print('=> Epoch[{}]({}/{}): train_loss:{:.4f} train_acc:{:.4f}'.format(
                 epoch,
                 i,
-                len()
+                len(train_dataset),
+                loss.item(),
+                acc
             ))
             loss.backward()
             optimizer.step()
+            writer.add_scalar('Train/Loss',loss,(epoch*i)+i)
+            writer.add_scalar('Train/Acc',acc,(epoch*i)+i)
             # print(ori_seq.shape)
             # print(base_mat.shape)
             # print(notation_matrix.shape)
             # print(true_notation.shape)
         else:
             continue
+
+def cal_acc(notation_produced,true_notation):
+    acc = 0
+    true_notation = true_notation.squeeze()
+    prediction = notation_produced.squeeze()
+    prediction = torch.round(prediction)
+    for i in range(prediction.shape[0]):
+        if torch.max(prediction[i]) == torch.max(true_notation[i]):
+            acc+=1
+    acc /= prediction.shape[0]
+    return acc
+
 
 
 def base_matrix_concat(x):
