@@ -1,2 +1,1 @@
-# AIGroupProject
-RNA Secondary Structure Prediction
+# RNASSP
