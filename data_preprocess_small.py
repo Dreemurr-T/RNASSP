@@ -6,8 +6,8 @@ from tqdm import tqdm
 # 遍历指定目录，显示目录下的所有文件名
 
 list_Dir = 'archiveII/'  # 修改为本地文件路径
-stru_Dir = '5s_stru/'
-seq_Dir = '5s_seq/'
+stru_Dir = 'data_stru_short/'
+seq_Dir = 'data_seq_short/'
 
 cnt = 0
 
@@ -40,33 +40,34 @@ def transform(data):
 
 def savefile(rnaseq, rnastructure, filename):
     global cnt
-    if len(rnaseq) == len(rnastructure):
-        cnt += 1
-        if not os.path.exists(stru_Dir):
-            os.mkdir(stru_Dir)
-        rnafile = filename[:-3]
-        rnafile = rnafile+".csv"
-        rnafile = stru_Dir + rnafile
-        rnacsv = open(rnafile, 'w', newline="")
-        writer = csv.writer(rnacsv)
-        m = len(rnastructure)
-        for i in range(m):
-            # print(rnastructure)
-            writer.writerow(rnastructure[i])
-        if not os.path.exists(seq_Dir):
-            os.mkdir(seq_Dir)
-        rnaseqfile = seq_Dir + filename[:-3] + "_seq.csv"
-        rnaseqcsv = open(rnaseqfile, 'w', newline="")
-        seqwriter = csv.writer(rnaseqcsv)
-        m = len(rnastructure)
-        for i in range(m):
-            seqwriter.writerow(rnaseq[i])
+    if cnt<100:
+        if len(rnaseq) < 300:
+            cnt += 1
+            if not os.path.exists(stru_Dir):
+                os.mkdir(stru_Dir)
+            rnafile = filename[:-3]
+            rnafile = rnafile+".csv"
+            rnafile = stru_Dir + rnafile
+            rnacsv = open(rnafile, 'w', newline="")
+            writer = csv.writer(rnacsv)
+            m = len(rnastructure)
+            for i in range(m):
+                # print(rnastructure)
+                writer.writerow(rnastructure[i])
+            if not os.path.exists(seq_Dir):
+                os.mkdir(seq_Dir)
+            rnaseqfile = seq_Dir + filename[:-3] + "_seq.csv"
+            rnaseqcsv = open(rnaseqfile, 'w', newline="")
+            seqwriter = csv.writer(rnaseqcsv)
+            m = len(rnastructure)
+            for i in range(m):
+                seqwriter.writerow(rnaseq[i])
 
 
 if __name__ == '__main__':
     pathDir = os.listdir(list_Dir)
     for i in tqdm(pathDir):
-        if i.endswith(".ct") and i.split('_')[0] == '5s':
+        if i.endswith(".ct") and i.split('_')[0] != 'te':
             # print(i)
             data, filename = readfile(list_Dir, i)
             rnaseq, rnastructure = transform(data)
