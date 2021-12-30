@@ -10,3 +10,6 @@ log/
 new_public_set/
 test_seq/
 test_stru/
+checkpoint_tRNA/
+tRNA_seq/
+tRNA_stru/

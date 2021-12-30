@@ -13,9 +13,9 @@ import random
 
 from torch.utils.tensorboard import SummaryWriter
 
-seq_path = '5s_seq/'
-struc_path = '5s_stru/'
-checkpoint_path = 'checkpoint/'
+seq_path = 'tRNA_seq/'
+struc_path = 'tRNA_stru/'
+checkpoint_path = 'checkpoint_tRNA/'
 
 os.makedirs(checkpoint_path,exist_ok=True)
 
@@ -35,7 +35,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # seq_L_padding = 300
 d = 8
-epochs = 50
+epochs = 10
 model = RNASSP(d).to(device)
 
 optimizer = optim.Adam(model.parameters(), lr=1e-3)

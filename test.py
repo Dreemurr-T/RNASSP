@@ -6,12 +6,12 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = RNASSP(d=8).to(device)
-model.load_state_dict(torch.load('checkpoint/model_epoch_49.pth'))
+model.load_state_dict(torch.load('checkpoint_tRNA/model_epoch_9.pth'))
 
 model.eval()
 
-seq_path = '5s_seq/'
-struc_path = '5s_stru/'
+seq_path = 'tRNA_seq/'
+struc_path = 'tRNA_stru/'
 data_set = data.RNADataset(seq_path, struc_path)
 
 batch_size = 1
@@ -38,18 +38,21 @@ def notation_matrix_concat(x):
     concat notation_embed form 1*L*3 to 1*L*L*3
     '''
     L = x.shape[1]
-    x = x.unsqueeze(1)
-    x = x.repeat(1, L, 1, 1)
-    return x
+    x1 = x.unsqueeze(1)
+    x1 = x1.repeat(1, L, 1, 1)
+    return x1
 
 def test():
     with torch.no_grad():
         for(i,test_data) in enumerate(test_dataset):
             ori_seq = test_data[0].to(device).float()  # batch_size*L*4
             true_notation = test_data[1].to(device).float()  # batch_size*L*3
+            # print(ori_seq.shape)
+            # print(true_notation.shape)
             base_mat = base_matrix_concat(ori_seq)
             notation_mat = notation_matrix_concat(true_notation)
             notation_mat = notation_mat.permute(0,3,1,2)
+           
             notation_mat_p,notation_p = model(base_mat)
             true_notation = true_notation.squeeze()
             ori_seq = ori_seq.squeeze()

@@ -6,8 +6,8 @@ from tqdm import tqdm
 # 遍历指定目录，显示目录下的所有文件名
 
 list_Dir = 'archiveII/'  # 修改为本地文件路径
-stru_Dir = '5s_stru/'
-seq_Dir = '5s_seq/'
+stru_Dir = 'tRNA_stru/'
+seq_Dir = 'tRNA_seq/'
 
 cnt = 0
 
@@ -66,7 +66,7 @@ def savefile(rnaseq, rnastructure, filename):
 if __name__ == '__main__':
     pathDir = os.listdir(list_Dir)
     for i in tqdm(pathDir):
-        if i.endswith(".ct") and i.split('_')[0] == '5s':
+        if i.endswith(".ct") and i.split('_')[0] == 'tRNA':
             # print(i)
             data, filename = readfile(list_Dir, i)
             rnaseq, rnastructure = transform(data)
