@@ -17,7 +17,7 @@ data_set = data.RNADataset(seq_path, struc_path)
 batch_size = 1
 test_dataset = DataLoader(
     dataset=data_set, num_workers=0, batch_size=batch_size)
-print(len(test_dataset))
+# print(len(test_dataset))
 
 def base_matrix_concat(x):
     '''
